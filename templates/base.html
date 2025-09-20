@@ -8,9 +8,10 @@
       <a class="navbar-brand" href="/">Flasky</a>
     </div>
     <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li><a href="/">Home</a></li>
-      </ul>
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="{{ url_for('reset') }}">Reset</a></li>
+        </ul>
     </div>
   </div>
 </div>
@@ -34,4 +35,28 @@
 {% block scripts %}
   {{ super() }}
   {{ moment.include_moment() }}
+
+  <script>
+    (function () {
+      // WTForms uses the field name as the id by default (id="email")
+      var email = document.getElementById('email') || document.querySelector('input[type="email"]');
+      if (!email) return;
+
+      function setMsg() {
+        // clear any previous custom message
+        email.setCustomValidity('');
+
+        if (email.validity.typeMismatch) {
+          // not a valid email shape
+          email.setCustomValidity("Please enter a valid email like name@utoronto.ca");
+        } else if (email.value && !/utoronto/i.test(email.value)) {
+          // valid email shape, but not a UofT address
+          email.setCustomValidity("Use your UofT email (must contain 'utoronto').");
+        }
+      }
+
+      email.addEventListener('input', setMsg);
+      email.addEventListener('invalid', setMsg);
+    })();
+  </script>
 {% endblock %}

@@ -27,7 +27,15 @@ def internal_server_error(e):
 # ----- Flask-WTF form -----
 class InfoForm(FlaskForm):
     username = StringField('What is your name?', validators=[DataRequired()])
-    email = StringField('What is your UofT Email address?', validators=[DataRequired(), Email()])
+    email = EmailField(
+    'What is your UofT Email address?',
+    validators=[DataRequired(), Email()],
+    render_kw={
+        "required": True,
+        "pattern": r"^[^@]+@[^@]*utoronto[^@]*$",
+        "title": "Please use your UofT email (must contain '@mail.utoronto.ca')."
+    }
+)
     submit = SubmitField('Submit')
 
 
@@ -61,6 +69,12 @@ def index():
                            ok=ok,
                            current_time=datetime.utcnow())
 
+# Route to refresh the page
+@app.route('/reset')
+def reset():
+    session.clear()  # or: session.pop('name', None); session.pop('email', None)
+    flash('Cleared stored name/email.')
+    return redirect(url_for('index'))
 
 # keep the dynamic route too (optional, nice for testing)
 @app.route("/user/<name>")
