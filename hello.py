@@ -1,13 +1,22 @@
-from flask import Flask
+from datetime import datetime
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+
 app = Flask(__name__)
+Bootstrap(app)   # initialize Flask-Bootstrap
+Moment(app)      # initialize Flask-Moment
 
-@app.route('/')
+@app.route("/")
 def index():
-    return '<h1>Hello World!</h1>'
+    # use your real name here
+    name = "Joshua"
+    return render_template("user.html", name=name, current_time=datetime.utcnow())
 
-@app.route('/user/<name>')
+# keep the dynamic route too (optional, nice for testing)
+@app.route("/user/<name>")
 def user(name):
-    return '<h1>Hello, {}!</h1>'.format(name)
+    return render_template("user.html", name=name, current_time=datetime.utcnow())
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
